@@ -1,6 +1,6 @@
 public class Main {
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         System.out.println("HELLO");
         Car car1 = new Car("yes", "Audi", 2008, 820, "Black", Car.Status.AVAILABLE, 4000, "Good as new");
         Car car2 = new Car("yes", "Audi", 2008, 820, "Black", Car.Status.AVAILABLE, 4000, "Good as new");
