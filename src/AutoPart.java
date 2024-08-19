@@ -1,6 +1,6 @@
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class AutoPart {
+public class AutoPart implements Purchasable{
     private static final AtomicInteger idCounter = new AtomicInteger(0);
     private String partID;
     private String partName;
