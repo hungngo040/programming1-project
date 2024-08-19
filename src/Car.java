@@ -1,6 +1,6 @@
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Car {
+public class Car implements Purchasable{
     private static final AtomicInteger idCounter = new AtomicInteger(0);
     private String carId;
     private String make;
