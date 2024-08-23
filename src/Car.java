@@ -1,11 +1,7 @@
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.BufferedReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Car implements Purchasable {
+public class Car implements Serializable, Purchasable {
     private static final AtomicInteger idCounter = new AtomicInteger(loadLastId()); // Initialize ID counter with the last used ID
     private String carId;
     private String make;

@@ -1,7 +1,9 @@
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SalesTransaction {
+    private static final AtomicInteger idCounter = new AtomicInteger(0);
     private String transactionID;
     private Date transactionDate;
     private String clientID;
@@ -13,10 +15,10 @@ public class SalesTransaction {
 
     // Constructors, getters, and setters
 
-    public SalesTransaction(String transactionID, Date transactionDate, String clientID,
+    public SalesTransaction(Date transactionDate, String clientID,
                             String salespersonID, List<Purchasable> purchasedItems,
                             double discount, double totalAmount, String additionalNotes) {
-        this.transactionID = transactionID;
+        this.transactionID = generateTransactionId();
         this.transactionDate = transactionDate;
         this.clientID = clientID;
         this.salespersonID = salespersonID;
@@ -24,6 +26,9 @@ public class SalesTransaction {
         this.discount = discount;
         this.totalAmount = totalAmount;
         this.additionalNotes = additionalNotes;
+    }
+    private String generateTransactionId() {
+        return "t-" + idCounter.incrementAndGet();
     }
 
     // Getters and Setters

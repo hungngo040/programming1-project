@@ -1,6 +1,8 @@
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class User {
+    private static final AtomicInteger idCounter = new AtomicInteger(0);
     private String userID;
     private String fullName;
     private Date dateOfBirth;
@@ -19,9 +21,9 @@ public class User {
     }
 
     // Constructors
-    public User(String userID, String fullName, Date dateOfBirth, String address,
+    public User(String fullName, Date dateOfBirth, String address,
                 String phoneNumber, String email, UserType userType, boolean status) {
-        this.userID = userID;
+        this.userID = generateUserId();
         this.fullName = fullName;
         this.dateOfBirth = dateOfBirth;
         this.address = address;
@@ -29,6 +31,9 @@ public class User {
         this.email = email;
         this.userType = userType;
         this.status = status;
+    }
+    private String generateUserId() {
+        return "u-" + idCounter.incrementAndGet();
     }
 
     // Getters and Setters

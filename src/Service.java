@@ -1,7 +1,9 @@
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Service {
+    private static final AtomicInteger idCounter = new AtomicInteger(0);
     private String serviceID;
     private Date serviceDate;
     private String clientID;
@@ -13,10 +15,10 @@ public class Service {
 
     // Constructors, getters, and setters
 
-    public Service(String serviceID, Date serviceDate, String clientID,
+    public Service(Date serviceDate, String clientID,
                    String mechanicID, String serviceType,
                    List<AutoPart> replacedParts, double serviceCost, String additionalNotes) {
-        this.serviceID = serviceID;
+        this.serviceID = generateServiceId();
         this.serviceDate = serviceDate;
         this.clientID = clientID;
         this.mechanicID = mechanicID;
@@ -24,6 +26,9 @@ public class Service {
         this.replacedParts = replacedParts;
         this.serviceCost = serviceCost;
         this.additionalNotes = additionalNotes;
+    }
+    private String generateServiceId() {
+        return "s-" + idCounter.incrementAndGet();
     }
 
     // Getters and Setters
