@@ -1,8 +1,9 @@
+import java.io.*;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class User {
-    private static final AtomicInteger idCounter = new AtomicInteger(0);
+public class User implements Serializable {
+    private static final AtomicInteger idCounter = new AtomicInteger(loadLastId()); // Initialize ID counter with the last used ID
     private String userID;
     private String fullName;
     private Date dateOfBirth;
@@ -11,7 +12,6 @@ public class User {
     private String email;
     private UserType userType;  // Using the enum type
     private boolean status;
-
 
     public enum UserType {
         MANAGER,
@@ -31,9 +31,50 @@ public class User {
         this.email = email;
         this.userType = userType;
         this.status = status;
+        writeToFile();
     }
+
+    // Generate a unique user ID (u-number)
     private String generateUserId() {
-        return "u-" + idCounter.incrementAndGet();
+        return "u-" + idCounter.incrementAndGet(); // Increment the ID counter for each new user
+    }
+
+    // Write user info to user.txt
+    private void writeToFile() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("user.txt", true))) {
+            writer.write(toFileString());
+            writer.newLine();
+            saveLastId(idCounter.get()); // Save the latest ID to the file after writing the user details
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Convert user info to string format for file writing
+    private String toFileString() {
+        return userID + "," + fullName + "," + dateOfBirth + "," + address + "," + phoneNumber + "," + email + "," + userType + "," + status;
+    }
+
+    // Load the last used ID from file
+    private static int loadLastId() {
+        try (BufferedReader reader = new BufferedReader(new FileReader("user_id_counter.txt"))) {
+            String line = reader.readLine();
+            if (line != null) {
+                return Integer.parseInt(line);
+            }
+        } catch (IOException | NumberFormatException e) {
+            // Handle file not found or format issues
+        }
+        return 0; // Default value if file not found or empty
+    }
+
+    // Save the last used ID to file
+    private static void saveLastId(int id) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("user_id_counter.txt"))) {
+            writer.write(String.valueOf(id));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     // Getters and Setters
@@ -115,3 +156,4 @@ public class User {
                 '}';
     }
 }
+
