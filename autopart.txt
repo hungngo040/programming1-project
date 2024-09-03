@@ -1,2 +1,0 @@
-p-1,wheel,docker,3,NEW,No,100.0,backup wheel
-p-2,door,Toyota,2,NEW,2 years,1000.0,backup door
