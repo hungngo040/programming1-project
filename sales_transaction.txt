@@ -1,0 +1,1 @@
+t-1,Fri Apr 09 00:00:00 ICT 1909,cl1001,s0020,[Car{carId='c-2', make='yes', model='Audi', year=2008, mileage=820, color='Black', status=AVAILABLE, price=4000.0, notes='Good as new'}, AutoPart{partID='p-1', partName='wheel', manufacturer='docker', partNumber=3, condition=NEW, warranty='No', cost=100.0, notes='backup wheel'}],500.0,9000.0,No

@@ -1,0 +1,3 @@
+c-1,yes,Audi,2008,820,Black,AVAILABLE,4000.0,Good as new
+c-2,yes,Audi,2008,820,Black,AVAILABLE,4000.0,Good as new
+c-3,yes,Audi,2008,820,Black,AVAILABLE,4000.0,Good as new
