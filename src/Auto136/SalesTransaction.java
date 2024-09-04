@@ -1,3 +1,5 @@
+package Auto136;
+
 import java.io.*;
 import java.util.Date;
 import java.util.List;
@@ -9,7 +11,7 @@ public class SalesTransaction implements Serializable {
     private Date transactionDate;
     private String clientID;
     private String salespersonID;
-    private List<Purchasable> purchasedItems; // Can contain AutoPart or Car
+    private List<Purchasable> purchasedItems; // Can contain Auto136.AutoPart or Auto136.Car
     private double discount;
     private double totalAmount;
     private String additionalNotes;
@@ -139,7 +141,7 @@ public class SalesTransaction implements Serializable {
 
     @Override
     public String toString() {
-        return "SalesTransaction{" +
+        return "Auto136.SalesTransaction{" +
                 "transactionID='" + transactionID + '\'' +
                 ", transactionDate=" + transactionDate +
                 ", clientID='" + clientID + '\'' +

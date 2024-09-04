@@ -1,3 +1,5 @@
+package Auto136;
+
 import java.io.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -13,7 +15,7 @@ public class Car implements Serializable, Purchasable {
     private double price;
     private String notes;
 
-    // Enum for Car Status
+    // Enum for Auto136.Car Status
     public enum Status {
         AVAILABLE,
         SOLD

@@ -1,3 +1,5 @@
+package Auto136;
+
 import java.io.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -12,7 +14,7 @@ public class AutoPart implements Serializable, Purchasable {
     private double cost;
     private String notes;
 
-    // Enum for AutoPart Condition
+    // Enum for Auto136.AutoPart Condition
     public enum Condition {
         NEW, USED, REFURBISHED
     }
