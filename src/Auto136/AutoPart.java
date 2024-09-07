@@ -1,10 +1,9 @@
 package Auto136;
 
 import java.io.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class AutoPart implements Serializable, Purchasable {
-    private static final AtomicInteger idCounter = new AtomicInteger(loadLastId()); // Initialize ID counter with the last used ID
+    public static int partCounter = 1; // Initialize ID counter with the last used ID
     private String partID;
     private String partName;
     private String manufacturer;
@@ -20,8 +19,8 @@ public class AutoPart implements Serializable, Purchasable {
     }
 
     // Constructor
-    public AutoPart(String partName, String manufacturer, int partNumber, Condition condition, String warranty, double cost, String notes) {
-        this.partID = generatePartId();
+    public AutoPart(String partId, String partName, String manufacturer, int partNumber, Condition condition, String warranty, double cost, String notes) {
+        this.partID = partId;
         this.partName = partName;
         this.manufacturer = manufacturer;
         this.partNumber = partNumber;
@@ -29,50 +28,11 @@ public class AutoPart implements Serializable, Purchasable {
         this.warranty = warranty;
         this.cost = cost;
         this.notes = notes;
-        writeToFile();
     }
 
     // Generate a unique part ID (p-number)
     private String generatePartId() {
-        return "p-" + idCounter.incrementAndGet(); // Increment the ID counter for each new part
-    }
-
-    // Write part info to autopart.txt
-    private void writeToFile() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("autopart.txt", true))) {
-            writer.write(toFileString());
-            writer.newLine();
-            saveLastId(idCounter.get()); // Save the latest ID to the file after writing the part details
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    // Convert part info to string format for file writing
-    private String toFileString() {
-        return partID + "," + partName + "," + manufacturer + "," + partNumber + "," + condition + "," + warranty + "," + cost + "," + notes;
-    }
-
-    // Load the last used ID from file
-    private static int loadLastId() {
-        try (BufferedReader reader = new BufferedReader(new FileReader("autopart_id_counter.txt"))) {
-            String line = reader.readLine();
-            if (line != null) {
-                return Integer.parseInt(line);
-            }
-        } catch (IOException | NumberFormatException e) {
-            // Handle file not found or format issues
-        }
-        return 0; // Default value if file not found or empty
-    }
-
-    // Save the last used ID to file
-    private static void saveLastId(int id) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("autopart_id_counter.txt"))) {
-            writer.write(String.valueOf(id));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        return "c-" + partCounter++;
     }
 
     // Getters and Setters

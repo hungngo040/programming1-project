@@ -5,7 +5,6 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-
 import static Auto136.Car.*;
 
 public class CarCRUD {
@@ -113,7 +112,7 @@ public class CarCRUD {
                 if (year >= 1886 && year <= 2024) {
                     validYear = true;
                 } else {
-                    System.out.println("Year must be between 1886 and 2024. Please try again.");
+                    System.out.println("Year must be between 1800 and 2024. Please try again.");
                 }
             } else {
                 System.out.println("Invalid input. Please enter a valid number for the year.");
@@ -338,7 +337,3 @@ public class CarCRUD {
         } while (isActive);
     }
 }
-
-
-
-

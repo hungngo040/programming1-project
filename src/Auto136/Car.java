@@ -4,7 +4,7 @@ import java.io.*;
 
 public class Car implements Purchasable {
     public static int carCounter = 1;// Initialize ID counter with the last used ID
-    private String carId;
+    private String carID;
     private String make;
     private String model;
     private int year;
@@ -22,7 +22,7 @@ public class Car implements Purchasable {
 
     // Constructor
     public Car(String carId, String make, String model, int year, int mileage, String color, Status status, double price, String notes) {
-        this.carId = carId;
+        this.carID = carId;
         this.make = make;
         this.model = model;
         this.year = year;
@@ -40,7 +40,7 @@ public class Car implements Purchasable {
 
     // Getters and Setters
     public String getCarId() {
-        return carId;
+        return carID;
     }
 
     public String getMake() {
@@ -110,7 +110,7 @@ public class Car implements Purchasable {
     @Override
     public String toString() {
         return "Car{" +
-                "carId='" + carId + '\'' +
+                "carID='" + carID + '\'' +
                 ", make='" + make + '\'' +
                 ", model='" + model + '\'' +
                 ", year=" + year +
