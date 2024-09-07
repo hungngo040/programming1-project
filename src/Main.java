@@ -1,8 +1,5 @@
 import Auto136.*;
 import Crud.*;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.Scanner;
 
 public class Main {
@@ -20,7 +17,7 @@ public class Main {
 
             switch (input) {
                 case "1":
-                    carCrud.carControl();
+                    CarCRUD.carControl();
                     break;
                 case "0":
                     isActive = false;

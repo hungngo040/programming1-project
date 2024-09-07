@@ -1,4 +1,0 @@
-c-35,1,1,1,1,1,SOLD,1.0,1
-c-36,2,2,2,2,2,SOLD,2.0,2
-c-37,toyota,800c,2019,209,blue,SOLD,1983.0,none
-c-39,audi,m320,1989,1023,black,AVAILABLE,398.0,none

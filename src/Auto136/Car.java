@@ -1,10 +1,9 @@
 package Auto136;
 
 import java.io.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
-public class Car implements Serializable, Purchasable {
-    private static final AtomicInteger idCounter = new AtomicInteger(loadLastId()); // Initialize ID counter with the last used ID
+public class Car implements Purchasable {
+    public static int carCounter = 1;// Initialize ID counter with the last used ID
     private String carId;
     private String make;
     private String model;
@@ -22,8 +21,8 @@ public class Car implements Serializable, Purchasable {
     }
 
     // Constructor
-    public Car(String make, String model, int year, int mileage, String color, Status status, double price, String notes) {
-        this.carId = generateCarId();
+    public Car(String carId, String make, String model, int year, int mileage, String color, Status status, double price, String notes) {
+        this.carId = carId;
         this.make = make;
         this.model = model;
         this.year = year;
@@ -32,50 +31,11 @@ public class Car implements Serializable, Purchasable {
         this.status = status;
         this.price = price;
         this.notes = notes;
-        writeToFile();
     }
 
     // Generate a unique car ID (c-number)
-    private String generateCarId() {
-        return "c-" + idCounter.incrementAndGet(); // Increment the ID counter for each new car
-    }
-
-    // Write car info to car.txt
-    private void writeToFile() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("car.txt", true))) {
-            writer.write(toFileString());
-            writer.newLine();
-            saveLastId(idCounter.get()); // Save the latest ID to the file after writing the car details
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    // Convert car info to string format for file writing
-    private String toFileString() {
-        return carId + "," + make + "," + model + "," + year + "," + mileage + "," + color + "," + status + "," + price + "," + notes;
-    }
-
-    // Load the last used ID from file
-    private static int loadLastId() {
-        try (BufferedReader reader = new BufferedReader(new FileReader("car_id_counter.txt"))) {
-            String line = reader.readLine();
-            if (line != null) {
-                return Integer.parseInt(line);
-            }
-        } catch (IOException | NumberFormatException e) {
-            // Handle file not found or format issues
-        }
-        return 0; // Default value if file not found or empty
-    }
-
-    // Save the last used ID to file
-    private static void saveLastId(int id) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("car_id_counter.txt"))) {
-            writer.write(String.valueOf(id));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public static String generateCarId() {
+        return "c-" + carCounter++;
     }
 
     // Getters and Setters
