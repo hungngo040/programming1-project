@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import static Auto136.AutoPart.*;
-import static Auto136.Car.generateCarId;
+
 
 public class AutoPartCRUD {
     private static final Scanner sc = new Scanner(System.in);
@@ -73,13 +73,13 @@ public class AutoPartCRUD {
         }
     }
 
-    // Method to create a car
+    // Method to create a part
     public static void createPart() {
         List<AutoPart> parts = readPartsFromFile();
         String partName;
         String manufacturer;
         int partNumber = 0;
-        String condition;
+        String condition = "";
         String warranty;
         double cost = 0.0;
         String notes;
@@ -128,12 +128,47 @@ public class AutoPartCRUD {
                 System.out.println("Condition must be either 'new' or 'used' or 'refurbished'. Please try again.");
             }
         }
+        do {
+            System.out.println("Enter warranty: ");
+            warranty = sc.nextLine();
+            if (warranty.isEmpty()) {
+                System.out.println("Part warranty cannot be empty. Please try again.");
+            }
+        } while (warranty.isEmpty());
 
+        boolean validCost = false;
+        while (!validCost) {
+            System.out.println("Enter part cost: ");
+            if (sc.hasNextDouble()) {
+                cost = sc.nextDouble();
+                sc.nextLine();
+                if (cost > 0) {
+                    validCost = true;
+                } else {
+                    System.out.println("Cost must be a positive number. Please try again.");
+                }
+            } else {
+                System.out.println("Invalid input. Please enter a valid number for the cost.");
+                sc.next();
+            }
+        }
+        System.out.println("Enter part notes: ");
+        notes = sc.nextLine();
+        if (notes.isEmpty()) {
+            notes = "none";
+        }
+
+        AutoPart.Condition newCondition = checkCondition(condition);
+        String newPartId = generatePartId();
+        AutoPart newPart = new AutoPart(newPartId,partName,manufacturer,partNumber,newCondition,warranty,cost,notes);
+        parts.add(newPart);
+        writePartsToFile(parts);
+        System.out.printf("AutoPart Added ID: %s%n", newPart.getPartID());
     }
 
 
     // Method to display part read from file
-    public static void readCar() {
+    public static void readPart() {
         List<AutoPart> parts = readPartsFromFile();
         System.out.println("Enter specific ID or a for all:");
         String input = sc.nextLine();
@@ -150,6 +185,88 @@ public class AutoPartCRUD {
                 }
             }
             if (!exist) System.out.println("Part does not exist");
+        }
+    }
+
+    // Method to update a single data from part
+    public static void updatePart() {
+        List<AutoPart> parts = readPartsFromFile();
+
+        System.out.println("Enter part id: ");
+        String id = sc.nextLine();
+        boolean exist = false;
+        for (AutoPart part : parts) {
+            if (id.equals(part.getPartID())) {
+                exist = true;
+                System.out.println("Enter data to update");
+                String data = sc.nextLine();
+                boolean invalid = false;
+                switch (data) {
+                    case "name":
+                        System.out.println("Enter part name: ");
+                        part.setPartName(sc.nextLine());
+                        break;
+                    case "manufacturer":
+                        System.out.println("Enter manufacturer: ");
+                        part.setManufacturer(sc.nextLine());
+                        break;
+                    case "number":
+                        System.out.println("Enter part number: ");
+                        part.setPartNumber(sc.nextInt());
+                        sc.nextLine();
+                        break;
+                    case "condition":
+                        System.out.println("Enter part condition: ");
+                        part.setCondition(checkCondition(sc.nextLine()));
+                        break;
+                    case "warranty":
+                        System.out.println("Enter part warranty: ");
+                        part.setWarranty(sc.nextLine());
+                        break;
+                    case "cost":
+                        System.out.println("Enter part cost: ");
+                        part.setCost(sc.nextDouble());
+                        sc.nextLine();
+                        break;
+                    case "notes":
+                        System.out.println("Enter part notes: ");
+                        part.setNotes(sc.nextLine());
+                        break;
+                    default:
+                        invalid = true;
+                        System.out.println("No matching field found. Please enter a valid field.");
+                        break;
+                }
+                if (!invalid) {
+                    writePartsToFile(parts);
+                    System.out.println("Updated: " + id);
+                    break;
+                }
+            }
+        }
+        if (!exist) {
+            System.out.println("No such ID");
+        }
+    }
+
+    // Method to delete a part
+    public static void deletePart() {
+        List<AutoPart> parts = readPartsFromFile();
+        System.out.println("Enter a specific ID to delete:");
+        String input = sc.nextLine();
+        boolean exist = false;
+        for (AutoPart part : parts) {
+            if (input.equals(part.getPartID())) {
+                exist = true;
+                parts.remove(part);
+                break;
+            }
+        }
+        if (exist) {
+            writePartsToFile(parts);
+            System.out.println("Part deleted");
+        } else {
+            System.out.println("Part does not exist");
         }
     }
 
@@ -176,6 +293,15 @@ public class AutoPartCRUD {
             switch (input) {
                 case "1":
                     createPart();
+                    break;
+                case "2":
+                    readPart();
+                    break;
+                case "3":
+                    updatePart();
+                    break;
+                case "4":
+                    deletePart();
                     break;
                 case "0":
                     isActive = false;

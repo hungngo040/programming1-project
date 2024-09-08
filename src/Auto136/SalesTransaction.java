@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class SalesTransaction implements Serializable {
+public class SalesTransaction {
     private static final AtomicInteger idCounter = new AtomicInteger(loadLastId()); // Initialize ID counter with the last used ID
     private String transactionID;
     private Date transactionDate;

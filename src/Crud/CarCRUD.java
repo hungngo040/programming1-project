@@ -250,7 +250,7 @@ public class CarCRUD {
                         break;
                     case "price":
                         System.out.println("Enter car price: ");
-                        car.setPrice(sc.nextInt());
+                        car.setPrice(sc.nextDouble());
                         sc.nextLine();
                         break;
                     case "notes":
@@ -284,6 +284,7 @@ public class CarCRUD {
             if (input.equals(car.getCarId())) {
                 exist = true;
                 cars.remove(car);
+                break;
             }
         }
         if (exist) {

@@ -19,6 +19,12 @@ public class Main {
                 case "1":
                     CarCRUD.carControl();
                     break;
+                case "2":
+                    AutoPartCRUD.partControl();
+                    break;
+                case "4":
+                    ServiceCRUD.serviceControl();
+                    break;
                 case "0":
                     isActive = false;
                     break;

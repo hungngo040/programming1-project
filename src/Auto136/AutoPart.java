@@ -31,8 +31,8 @@ public class AutoPart implements Serializable, Purchasable {
     }
 
     // Generate a unique part ID (p-number)
-    private String generatePartId() {
-        return "c-" + partCounter++;
+    public static String generatePartId() {
+        return "p-" + partCounter++;
     }
 
     // Getters and Setters
