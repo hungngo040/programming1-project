@@ -1,0 +1,4 @@
+admin,adminpass,John Doe,1980-01-01,123 Main St,555-1234,john.doe@example.com,MANAGER,true
+employee1,emp1pass,Jane Smith,1990-05-15,456 Elm St,555-5678,jane.smith@example.com,SALESPERSON,true
+client1,clientpass,Robert Brown,2000-09-21,789 Pine St,555-9101,robert.brown@example.com,CLIENT,true
+
