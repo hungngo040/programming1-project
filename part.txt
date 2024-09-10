@@ -1,1 +1,3 @@
 p-2,wind shield,nomad,2,USED,none,300.0,none
+p-3,wheel,adf,34,NEW,sdaf,234.0,none
+p-4,new,asdf,3,USED,sadf,43.0,none

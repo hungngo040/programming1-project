@@ -198,7 +198,7 @@ public class AutoPartCRUD {
         for (AutoPart part : parts) {
             if (id.equals(part.getPartID())) {
                 exist = true;
-                System.out.println("Enter data to update");
+                System.out.println("Enter data to update (name/manufacturer/number/condition/warranty/cost/notes)");
                 String data = sc.nextLine();
                 boolean invalid = false;
                 switch (data) {

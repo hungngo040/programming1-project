@@ -70,7 +70,7 @@ public class ServiceCRUD {
                         partCounter = id + 1;
                     }
                 } catch (Exception e) {
-                    System.out.println("An unexpected error occurred while creating the part: " + e.getMessage());
+                    System.out.println("An unexpected error occurred while creating service: " + e.getMessage());
                     System.exit(0);
                 }
 
@@ -106,7 +106,7 @@ public class ServiceCRUD {
     }
 
     public static void createService() {
-        List<Service> services = new ArrayList<>();
+        List<Service> services = readServicesFromFile();
         List<AutoPart> parts = readPartsFromFile();
         LocalDate serviceDate;
         int year = 0;
@@ -271,6 +271,163 @@ public class ServiceCRUD {
 
     public static void updateService() {
         List<Service> services = readServicesFromFile();
+        List<AutoPart> parts = readPartsFromFile();
+        System.out.println("Enter service id: ");
+        String id = sc.nextLine();
+        boolean exist = false;
+        for (Service service : services) {
+            List<AutoPart> replacedParts = service.getReplacedParts();
+            if (id.equals(service.getServiceID())) {
+                exist = true;
+                System.out.println("Enter data to update (date/client/mechanic/type/replaced parts/cost/notes)");
+                String data = sc.nextLine();
+                boolean invalid = false;
+                switch (data) {
+                    case "date":
+                        int year = 0;
+                        int month = 0;
+                        int day = 0;
+
+                        boolean validYear = false;
+                        while (!validYear) {
+                            System.out.println("Enter date year: ");
+                            if (sc.hasNextInt()) {
+                                year = sc.nextInt();
+                                sc.nextLine();
+                                if (year >= 1) {
+                                    validYear = true;
+                                } else {
+                                    System.out.println("Year must be higher than 0. Please try again.");
+                                }
+                            } else {
+                                System.out.println("Invalid input. Please enter a valid number for year.");
+                                sc.next();
+                            }
+                        }
+
+                        boolean validMonth = false;
+                        while (!validMonth) {
+                            System.out.println("Enter date month: ");
+                            if (sc.hasNextInt()) {
+                                month = sc.nextInt();
+                                sc.nextLine();
+                                if (month >= 1 && month <= 12) {
+                                    validMonth = true;
+                                } else {
+                                    System.out.println("Month must be in range 1-12. Please try again.");
+                                }
+                            } else {
+                                System.out.println("Invalid input. Please enter a valid number for month.");
+                                sc.next();
+                            }
+                        }
+
+                        boolean validDay = false;
+                        while (!validDay) {
+                            System.out.println("Enter date day: ");
+                            if (sc.hasNextInt()) {
+                                day = sc.nextInt();
+                                sc.nextLine();
+                                if (day >= 1 && day <= 31) {
+                                    validDay = true;
+                                } else {
+                                    System.out.println("Day must be in range 1-31. Please try again.");
+                                }
+                            } else {
+                                System.out.println("Invalid input. Please enter a valid number for month.");
+                                sc.next();
+                            }
+                        }
+                        LocalDate serviceDate = LocalDate.of(year,month,day);
+                        service.setServiceDate(serviceDate);
+                        break;
+                    case "client":
+                        System.out.println("Enter service clientID: ");
+                        service.setClientID(sc.nextLine());
+                        break;
+                    case "mechanic":
+                        System.out.println("Enter service mechanicID: ");
+                        service.setMechanicID(sc.nextLine());
+                        break;
+                    case "type":
+                        System.out.println("Enter service type: ");
+                        service.setServiceType(sc.nextLine());
+                        break;
+                    case "replaced parts":
+                        System.out.println("List of parts: " + replacedParts);
+                        //Delete choice
+                        if(!replacedParts.isEmpty()) {
+                            boolean validDelete = false;
+                            while (!validDelete) {
+                                System.out.println("Enter part Id to delete or enter 'skip': ");
+                                String input = sc.nextLine().trim();
+                                if (input.equals("skip")) {
+                                    validDelete = true;
+                                } else if (input.isEmpty()) {
+                                    System.out.println("Input cannot be empty");
+                                } else {
+                                    for (AutoPart replacedPart : replacedParts) {
+                                        if (input.equals(replacedPart.getPartID())) {
+                                            validDelete = true;
+                                            replacedParts.remove(replacedPart);
+                                            break;
+                                        }
+                                    }
+                                    if (!validDelete) {
+                                        System.out.println("Input invalid");
+                                    }
+                                }
+                            }
+                        }
+
+                        //Add choice
+                        boolean validAdd = false;
+                        while (!validAdd) {
+                            System.out.println("Enter part Id to add or enter 'skip': ");
+                            String input = sc.nextLine().trim();
+                            if (input.equals("skip")) {
+                                validAdd = true;
+                            } else if (input.isEmpty()) {
+                                System.out.println("Input cannot be empty");
+                            } else {
+                                for (AutoPart part : parts) {
+                                    if (input.equals(part.getPartID())) {
+                                        validAdd = true;
+                                        replacedParts.add(part);
+                                        break;
+                                    }
+                                }
+                                if (!validAdd) {
+                                    System.out.println("Input invalid");
+                                }
+                            }
+                        }
+                        service.setReplacedParts(replacedParts);
+                        break;
+                    case "cost":
+                        System.out.println("Enter service cost: ");
+                        service.setServiceCost(sc.nextDouble());
+                        sc.nextLine();
+                        break;
+                    case "notes":
+                        System.out.println("Enter service notes: ");
+                        service.setAdditionalNotes(sc.nextLine());
+                        break;
+                    default:
+                        invalid = true;
+                        System.out.println("No matching field found. Please enter a valid field.");
+                        break;
+                }
+                if (!invalid) {
+                    writeServicesToFile(services);
+                    System.out.println("Updated: " + id);
+                    break;
+                }
+            }
+        }
+        if (!exist) {
+            System.out.println("No such ID");
+        }
     }
 
     // Method to delete a part

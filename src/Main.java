@@ -10,6 +10,16 @@ public class Main {
     private static final Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) {
+        System.out.print("""
+                COSC2081 GROUP ASSIGNMENT
+                AUTO168 CAR DEALERSHIP MANAGEMENT SYSTEM
+                Instructor: Mr. Minh Vu & Mr. Dung Nguyen
+                Group: Group Name
+                s4019303, Ngo Viet Hung
+                sXXXXXXX, Nguyen Viet Phap
+                sXXXXXXX, Student Name
+
+                """);
         LoginManager.loadUserData();
 
         if (LoginManager.performLogin(sc)) {

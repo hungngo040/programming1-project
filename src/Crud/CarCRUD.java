@@ -218,7 +218,7 @@ public class CarCRUD {
         for (Car car : cars) {
             if (id.equals(car.getCarId())) {
                 exist = true;
-                System.out.println("Enter data to update: ");
+                System.out.println("Enter data to update (make/model/year/mileage/color/status/price/notes): ");
                 String data = sc.nextLine();
                 boolean invalid = false;
                 switch (data) {
