@@ -12,18 +12,6 @@ public class AutoPartCRUD {
     private static final Scanner sc = new Scanner(System.in);
     private static final String filename = "part.txt";
 
-    public static AutoPart.Condition checkCondition(String condition) {
-        AutoPart.Condition newCondition = null;
-        if (condition.equals("new")) {
-            newCondition = Condition.NEW;
-        } else if (condition.equals("used")) {
-            newCondition = Condition.USED;
-        } else if (condition.equals("refurbished")) {
-            newCondition = Condition.REFURBISHED;
-        }
-        return newCondition;
-    }
-
     // Method to read from file
     public static List<AutoPart> readPartsFromFile() {
         List<AutoPart> parts = new ArrayList<>();
@@ -79,7 +67,7 @@ public class AutoPartCRUD {
         String partName;
         String manufacturer;
         int partNumber = 0;
-        String condition = "";
+        AutoPart.Condition condition = null;
         String warranty;
         double cost = 0.0;
         String notes;
@@ -120,12 +108,13 @@ public class AutoPartCRUD {
 
         boolean validCondition = false;
         while (!validCondition) {
-            System.out.println("Enter part condition (new/used/refurbished): ");
-            condition = sc.nextLine().toLowerCase();
-            if (condition.equals("new") || condition.equals("used") || condition.equals("refurbished")) {
+            System.out.println("Enter part condition (NEW/USED/REFURBISHED): ");
+            String conditionInput = sc.nextLine().toUpperCase();
+            try {
+                condition = AutoPart.Condition.valueOf(conditionInput);
                 validCondition = true;
-            } else {
-                System.out.println("Condition must be either 'new' or 'used' or 'refurbished'. Please try again.");
+            } catch (IllegalArgumentException e) {
+                System.out.println("Condition must be either (NEW/USED/REFURBISHED). Please try again.");
             }
         }
         do {
@@ -158,9 +147,8 @@ public class AutoPartCRUD {
             notes = "none";
         }
 
-        AutoPart.Condition newCondition = checkCondition(condition);
         String newPartId = generatePartId();
-        AutoPart newPart = new AutoPart(newPartId,partName,manufacturer,partNumber,newCondition,warranty,cost,notes);
+        AutoPart newPart = new AutoPart(newPartId,partName,manufacturer,partNumber,condition,warranty,cost,notes);
         parts.add(newPart);
         writePartsToFile(parts);
         System.out.printf("AutoPart Added ID: %s%n", newPart.getPartID());
@@ -216,8 +204,13 @@ public class AutoPartCRUD {
                         sc.nextLine();
                         break;
                     case "condition":
-                        System.out.println("Enter part condition: ");
-                        part.setCondition(checkCondition(sc.nextLine()));
+                        System.out.println("Enter part condition (NEW/USED/REFURBISHED): ");
+                        try {
+                            part.setCondition(AutoPart.Condition.valueOf(sc.nextLine().toUpperCase()));
+                        } catch (IllegalArgumentException e) {
+                            invalid = true;
+                            System.out.println("Invalid part condition. Please try again.");
+                        }
                         break;
                     case "warranty":
                         System.out.println("Enter part warranty: ");

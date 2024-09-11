@@ -11,16 +11,6 @@ public class CarCRUD {
     private static final Scanner sc = new Scanner(System.in);
     private static final String filename = "car.txt";
 
-    //Check Status
-    public static Car.Status checkStatus(String status) {
-        Car.Status stat = null;
-        if (status.equals("available")) {
-            stat = Car.Status.AVAILABLE;
-        } else if (status.equals("sold")) {
-            stat = Car.Status.SOLD;
-        }
-        return stat;
-    }
 
     // Method to read from file
     public static List<Car> readCarsFromFile() {
@@ -82,7 +72,7 @@ public class CarCRUD {
         int year = 0;
         int mileage = 0;
         String color;
-        String status = "";
+        Car.Status status = null;
         double price = 0.0;
         String notes;
 
@@ -147,12 +137,13 @@ public class CarCRUD {
 
         boolean validStatus = false;
         while (!validStatus) {
-            System.out.println("Enter car status (available/sold): ");
-            status = sc.nextLine().toLowerCase();
-            if (status.equals("available") || status.equals("sold")) {
+            System.out.println("Enter car status (AVAILABLE/SOLD): ");
+            String stat = sc.nextLine().toUpperCase();
+            try {
+                status = Car.Status.valueOf(stat);
                 validStatus = true;
-            } else {
-                System.out.println("Status must be either 'available' or 'sold'. Please try again.");
+            } catch (IllegalArgumentException e) {
+                System.out.println("Status must be either (AVAILABLE/SOLD). Please try again.");
             }
         }
 
@@ -178,9 +169,8 @@ public class CarCRUD {
         if (notes.isEmpty()) {
             notes = "none";
         }
-        Car.Status stat = checkStatus(status);
         String newCarId = generateCarId();
-        Car newCar = new Car(newCarId, make, model, year,mileage,color,stat,price,notes);
+        Car newCar = new Car(newCarId, make, model, year,mileage,color,status,price,notes);
         cars.add(newCar);
 
         writeCarsToFile(cars);
@@ -245,8 +235,13 @@ public class CarCRUD {
                         car.setColor(sc.nextLine());
                         break;
                     case "status":
-                        System.out.println("Enter car status(available/sold): ");
-                        car.setStatus(checkStatus(sc.nextLine()));
+                        System.out.println("Enter car status (AVAILABLE/SOLD): ");
+                        try {
+                            car.setStatus(Car.Status.valueOf(sc.nextLine().toUpperCase()));
+                        } catch (IllegalArgumentException e) {
+                            invalid = true;
+                            System.out.println("Invalid car status. Please try again.");
+                        }
                         break;
                     case "price":
                         System.out.println("Enter car price: ");
