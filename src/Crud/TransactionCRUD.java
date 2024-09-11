@@ -6,8 +6,8 @@ import java.util.Date;
 import java.util.List;
 
 public class TransactionCRUD {
-
-    private static final String FILE_NAME = "sales_transactions.txt"; // File name for storing sales transactions
+    private static final Scanner sc = new Scanner(System.in);
+    private static final String FILE_NAME = "transactions.txt"; // File name for storing sales transactions
 
     // Create a new SalesTransaction and save it to the file
     public void createSalesTransaction(SalesTransaction transaction) {
