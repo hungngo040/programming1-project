@@ -1,5 +1,6 @@
 package Crud;
 
+import Auto136.SalesTransaction;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
