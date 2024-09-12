@@ -48,7 +48,7 @@ public class SalesTransaction {
     }
 
     // Convert transaction info to string format for file writing
-    private String toFileString() {
+    public String toFileString() {
         return transactionID + "," + transactionDate + "," + clientID + "," + salespersonID + "," + purchasedItems + "," + discount + "," + totalAmount + "," + additionalNotes;
     }
 
