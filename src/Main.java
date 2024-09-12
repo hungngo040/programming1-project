@@ -18,7 +18,7 @@ public class Main {
                 Group: Group Name
                 s4019303, Ngo Viet Hung
                 sXXXXXXX, Nguyen Viet Phap
-                sXXXXXXX, Student Name
+                s3989101, Nguyen Nhat Lam
 
                 """);
         LoginManager.loadUserData();
