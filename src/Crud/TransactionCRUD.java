@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.List;
 
 public class TransactionCRUD {
-    private static final Scanner sc = new Scanner(System.in);
     private static final String FILE_NAME = "transactions.txt"; // File name for storing sales transactions
 
     // Create a new SalesTransaction and save it to the file
@@ -115,32 +114,4 @@ public class TransactionCRUD {
         return totalSales;
     }
 
-    // Load all transactions from the file at startup
-    private void loadTransactionsFromFile() {
-        try (BufferedReader reader = new BufferedReader(new FileReader("transactions.txt"))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] data = line.split(",");
-                // Assuming the data order in the file matches this structure
-                String transactionID = data[0];
-                Date transactionDate = new Date(Long.parseLong(data[1])); // Assuming timestamp format
-                String clientID = data[2];
-                String salespersonID = data[3];
-                List<Purchasable> purchasedItems = loadPurchasedItems(data[4]);
-                double discount = Double.parseDouble(data[5]);
-                double totalAmount = Double.parseDouble(data[6]);
-                String additionalNotes = data[7];
-
-                SalesTransaction transaction = new SalesTransaction(transactionID, transactionDate, clientID, salespersonID, purchasedItems, discount, totalAmount, additionalNotes);
-                transactions.add(transaction);
-            }
-        } catch (IOException | NumberFormatException e) {
-            e.printStackTrace();
-        }
-
-    // Helper method to load purchased items from a string (stubbed for simplicity)
-    private List<Purchasable> loadPurchasedItems(String purchasedItemsString) {
-        // This method should convert the string back into Purchasable objects
-        return new ArrayList<>(); // Implement conversion logic
-    }
 }
