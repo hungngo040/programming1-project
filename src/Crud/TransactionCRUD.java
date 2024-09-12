@@ -117,7 +117,7 @@ public class TransactionCRUD {
 
     // Load all transactions from the file at startup
     private void loadTransactionsFromFile() {
-        try (BufferedReader reader = new BufferedReader(new FileReader("sales_transactions.txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("transactions.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split(",");
