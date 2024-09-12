@@ -71,6 +71,40 @@ public class Main {
                             UserLogger.logActivity("Attempted Service operation by non-manager " + LoginManager.getLoggedInUser().getUserID());
                         }
                         break;
+
+                    case "5":
+                        if (isManager()) {
+                            System.out.println("Transaction operation selected.");
+                            System.out.println("1: Add Transaction");
+                            System.out.println("2: Get Transaction by ID");
+                            System.out.println("3: Update Transaction");
+                            System.out.println("4: Delete Transaction");
+                            String transactionInput = sc.nextLine();
+                            
+                            switch (transactionInput) {
+                                case "1":
+                                    TransactionCRUD.addTransaction();
+                                    break;
+                                case "2":
+                                    TransactionCRUD.getTransactionById();
+                                    break;
+                                case "3":
+                                    TransactionCRUD.updateTransaction();
+                                    break;
+                                case "4":
+                                    TransactionCRUD.deleteTransaction();
+                                    break;
+                                default:
+                                    System.out.println("Invalid input.");
+                            }
+                            UserLogger.logActivity("Transaction operation performed by " + LoginManager.getLoggedInUser().getUserID());
+                        } else {
+                            System.out.println("Access denied. Only managers can perform this operation.");
+                            UserLogger.logActivity("Attempted Transaction operation by non-manager " + LoginManager.getLoggedInUser().getUserID());
+                        }
+                        break;
+
+                    
                     case "0":
                         isActive = false;
                         UserLogger.logActivity("User " + LoginManager.getLoggedInUser().getUserID() + " exited the application.");
