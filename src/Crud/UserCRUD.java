@@ -175,7 +175,7 @@ public class UserCRUD {
         for (User user : users) {
             if (id.equals(user.getUserID())) {
                 found = true;
-                System.out.println("Enter data to update: ");
+                System.out.println("Enter data to update: (fullName/dateOfBirth/address/phoneNumber/email/userType/status) ");
                 String data = sc.nextLine();
                 switch (data) {
                     case "fullName":
