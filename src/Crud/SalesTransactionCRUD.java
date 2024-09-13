@@ -11,38 +11,14 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static Auto136.AutoPart.partCounter;
-import static Auto136.SalesTransaction.generateTransactionId;
-import static Auto136.SalesTransaction.transactionCounter;
+import static Auto136.SalesTransaction.*;
 import static Crud.AutoPartCRUD.readPartsFromFile;
+import static Crud.ServiceCRUD.stringToDate;
+import static Crud.ServiceCRUD.readReplaceParts;
 
 public class SalesTransactionCRUD {
     private static final Scanner sc = new Scanner(System.in);
     private static final String filename = "sale_transaction.txt";
-
-    public static LocalDate stringToDate(String dateString) {
-        String[] fields = dateString.split("-");
-        ArrayList<Integer> dateFields = new ArrayList<>();
-        for (String field : fields) {
-            dateFields.add(Integer.parseInt(field));
-        }
-        return LocalDate.of(dateFields.get(0), dateFields.get(1), dateFields.get(2));
-    }
-
-    public static List<AutoPart> readReplaceParts(String string) {
-        List<AutoPart> parts = readPartsFromFile();
-        List<AutoPart> replacedParts = new ArrayList<>();
-        String partIDs = string.replace("[", "").replace("]", "");
-        String[] fields = partIDs.split(",");
-        for (AutoPart part : parts) {
-            for (String field : fields) {
-                if (part.getPartID().equals(field)) {
-                    replacedParts.add(part);
-                }
-            }
-        }
-        return replacedParts;
-    }
 
     // Method to read from file
     public static List<SalesTransaction> readTransactionsFromFile() {
@@ -67,8 +43,8 @@ public class SalesTransactionCRUD {
                     transactions.add(transaction);
 
                     int id = Integer.parseInt(fields.get(0).substring(2));
-                    if (id >= partCounter) {
-                        partCounter = id + 1;
+                    if (id >= transactionCounter) {
+                        transactionCounter = id + 1;
                     }
                 } catch (Exception e) {
                     System.out.println("An unexpected error occurred while creating transaction: " + e.getMessage());
@@ -116,7 +92,6 @@ public class SalesTransactionCRUD {
 
         String clientID;
         String salePersonID;
-        String serviceType;
         List<AutoPart> replacedParts = new ArrayList<>();
         double discount = 0.0;
         double totalAmount = 0.0;

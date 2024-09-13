@@ -11,8 +11,8 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static Auto136.AutoPart.partCounter;
-import static Auto136.Service.generateServiceId;
+
+import static Auto136.Service.*;
 import static Crud.AutoPartCRUD.readPartsFromFile;
 
 public class ServiceCRUD {
@@ -32,7 +32,7 @@ public class ServiceCRUD {
         List<AutoPart> parts = readPartsFromFile();
         List<AutoPart> replacedParts = new ArrayList<>();
         String partIDs = string.replace("[", "").replace("]", "");
-        String[] fields = partIDs.split(",");
+        String[] fields = partIDs.split(",\\s*");
         for (AutoPart part : parts) {
             for (String field : fields) {
                 if (part.getPartID().equals(field)) {
@@ -66,8 +66,8 @@ public class ServiceCRUD {
                     services.add(service);
 
                     int id = Integer.parseInt(fields.get(0).substring(2));
-                    if (id >= partCounter) {
-                        partCounter = id + 1;
+                    if (id >= serviceCounter) {
+                        serviceCounter = id + 1;
                     }
                 } catch (Exception e) {
                     System.out.println("An unexpected error occurred while creating service: " + e.getMessage());
