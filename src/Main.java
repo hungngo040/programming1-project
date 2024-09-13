@@ -1,9 +1,6 @@
 import Auto136.User;
-import Crud.AutoPartCRUD;
-import Crud.CarCRUD;
-import Crud.ServiceCRUD;
-import Crud.UserCRUD;
-import Crud.TransactionCRUD;
+import Crud.*;
+
 
 import java.util.Scanner;
 
@@ -17,8 +14,8 @@ public class Main {
                 Instructor: Mr. Minh Vu & Mr. Dung Nguyen
                 Group: Group Name
                 s4019303, Ngo Viet Hung
-                sXXXXXXX, Nguyen Viet Phap
-                s3989101, Nguyen Nhat Lam
+                s4012986, Nguyen Viet Phap
+                sXXXXXXX, Student Name
 
                 """);
         LoginManager.loadUserData();
@@ -71,40 +68,15 @@ public class Main {
                             UserLogger.logActivity("Attempted Service operation by non-manager " + LoginManager.getLoggedInUser().getUserID());
                         }
                         break;
-
                     case "5":
                         if (isManager()) {
-                            System.out.println("Transaction operation selected.");
-                            System.out.println("1: Add Transaction");
-                            System.out.println("2: Get Transaction by ID");
-                            System.out.println("3: Update Transaction");
-                            System.out.println("4: Delete Transaction");
-                            String transactionInput = sc.nextLine();
-                            
-                            switch (transactionInput) {
-                                case "1":
-                                    TransactionCRUD.addTransaction();
-                                    break;
-                                case "2":
-                                    TransactionCRUD.getTransactionById();
-                                    break;
-                                case "3":
-                                    TransactionCRUD.updateTransaction();
-                                    break;
-                                case "4":
-                                    TransactionCRUD.deleteTransaction();
-                                    break;
-                                default:
-                                    System.out.println("Invalid input.");
-                            }
+                            SalesTransactionCRUD.transactionControl();
                             UserLogger.logActivity("Transaction operation performed by " + LoginManager.getLoggedInUser().getUserID());
                         } else {
                             System.out.println("Access denied. Only managers can perform this operation.");
                             UserLogger.logActivity("Attempted Transaction operation by non-manager " + LoginManager.getLoggedInUser().getUserID());
                         }
                         break;
-
-                    
                     case "0":
                         isActive = false;
                         UserLogger.logActivity("User " + LoginManager.getLoggedInUser().getUserID() + " exited the application.");
