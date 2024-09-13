@@ -1,23 +1,20 @@
 package Crud;
 
-
 import Auto136.User;
 
 import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
+import java.util.regex.Pattern;
 
-import static Auto136.Car.carCounter;
 import static Auto136.User.userCounter;
 
 public class UserCRUD {
     private static final Scanner sc = new Scanner(System.in);
     private static final String filename = "user.txt";
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private static final Pattern phonePattern = Pattern.compile("\\d{10}"); // Simple validation for 10-digit phone number
 
     // Method to read from file
     public static List<User> readUsersFromFile() {
@@ -34,7 +31,6 @@ public class UserCRUD {
                             User.UserType.valueOf(fields[6]),
                             Boolean.parseBoolean(fields[7]));
                     users.add(user);
-
                 } catch (ParseException e) {
                     System.out.println("Error parsing date: " + e.getMessage());
                 }
@@ -94,8 +90,15 @@ public class UserCRUD {
         System.out.println("Enter user address: ");
         address = sc.nextLine();
 
-        System.out.println("Enter user phone number: ");
-        phoneNumber = sc.nextLine();
+        while (true) {
+            System.out.println("Enter user phone number (10 digits): ");
+            phoneNumber = sc.nextLine();
+            if (phonePattern.matcher(phoneNumber).matches()) {
+                break;
+            } else {
+                System.out.println("Invalid phone number. Please enter exactly 10 digits.");
+            }
+        }
 
         System.out.println("Enter user email: ");
         email = sc.nextLine();
@@ -126,6 +129,7 @@ public class UserCRUD {
     }
 
     // Method to display user read from file
+    // Method to display user read from file
     public static void readUser() {
         List<User> users = readUsersFromFile();
         System.out.println("Enter specific ID or 'a' for all:");
@@ -134,18 +138,32 @@ public class UserCRUD {
 
         if (input.equals("a")) {
             for (User user : users) {
-                System.out.println(user);
+                System.out.println(formatUser(user));
             }
         } else {
             for (User user : users) {
                 if (input.equals(user.getUserID())) {
                     found = true;
-                    System.out.println(user);
+                    System.out.println(formatUser(user));
                 }
             }
             if (!found) System.out.println("User does not exist");
         }
     }
+
+    // Helper method to format User details
+    private static String formatUser(User user) {
+        return String.format("UserID: %s, Full Name: %s, Date of Birth: %s, Address: %s, Phone Number: %s, Email: %s, User Type: %s, Status: %s",
+                user.getUserID(),
+                user.getFullName(),
+                dateFormat.format(user.getDateOfBirth()),  // Format the date to yyyy-MM-dd
+                user.getAddress(),
+                user.getPhoneNumber(),
+                user.getEmail(),
+                user.getUserType(),
+                user.getStatus());
+    }
+
 
     // Method to update a single data from user
     public static void updateUser() {
@@ -177,8 +195,16 @@ public class UserCRUD {
                         user.setAddress(sc.nextLine());
                         break;
                     case "phoneNumber":
-                        System.out.println("Enter user phone number: ");
-                        user.setPhoneNumber(sc.nextLine());
+                        while (true) {
+                            System.out.println("Enter user phone number (10 digits): ");
+                            String phoneNumber = sc.nextLine();
+                            if (phonePattern.matcher(phoneNumber).matches()) {
+                                user.setPhoneNumber(phoneNumber);
+                                break;
+                            } else {
+                                System.out.println("Invalid phone number. Please enter exactly 10 digits.");
+                            }
+                        }
                         break;
                     case "email":
                         System.out.println("Enter user email: ");
@@ -277,4 +303,5 @@ public class UserCRUD {
         } while (isActive);
     }
 }
+
 
