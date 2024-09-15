@@ -28,6 +28,8 @@ public class Main {
                 System.out.println("3: User operation");
                 System.out.println("4: Service operation");
                 System.out.println("5: Transaction operation");
+                System.out.println("6: Manager Statistical operation");
+                System.out.println("7: Employee Statistical operation");
                 System.out.println("0: exit");
                 String input = sc.nextLine();
 
@@ -74,6 +76,24 @@ public class Main {
                             UserLogger.logActivity("Transaction operation performed by " + LoginManager.getLoggedInUser().getUserID());
                         } else {
                             System.out.println("Access denied. Only managers can perform this operation.");
+                            UserLogger.logActivity("Attempted Transaction operation by non-manager " + LoginManager.getLoggedInUser().getUserID());
+                        }
+                        break;
+                    case "6":
+                        if (isManager()) {
+                            StatisticCalculation.ManagerStatisticOpControl();
+                            UserLogger.logActivity("Statistical operation performed by " + LoginManager.getLoggedInUser().getUserID());
+                        } else {
+                            System.out.println("Access denied. Only managers can perform this operation.");
+                            UserLogger.logActivity("Attempted Transaction operation by non-manager " + LoginManager.getLoggedInUser().getUserID());
+                        }
+                        break;
+                    case "7":
+                        if (!isManager()) {
+                            StatisticCalculation.employeeStatisticOpControl();
+                            UserLogger.logActivity("Statistical operation performed by " + LoginManager.getLoggedInUser().getUserID());
+                        } else {
+                            System.out.println("Access denied. Only employees can perform this operation.");
                             UserLogger.logActivity("Attempted Transaction operation by non-manager " + LoginManager.getLoggedInUser().getUserID());
                         }
                         break;
