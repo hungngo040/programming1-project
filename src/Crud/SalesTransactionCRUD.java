@@ -1,6 +1,7 @@
 package Crud;
 
 import Auto136.AutoPart;
+import Auto136.Car;
 import Auto136.SalesTransaction;
 
 import java.io.*;
@@ -11,15 +12,32 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
 import static Auto136.SalesTransaction.*;
 import static Crud.AutoPartCRUD.readPartsFromFile;
+import static Crud.CarCRUD.readCarsFromFile;
 import static Crud.ServiceCRUD.stringToDate;
 import static Crud.ServiceCRUD.readReplaceParts;
+
 
 public class SalesTransactionCRUD {
     private static final Scanner sc = new Scanner(System.in);
     private static final String filename = "sale_transaction.txt";
 
+    public static List<Car> readCar(String string) {
+        List<Car> cars = readCarsFromFile();
+        List<Car> newCars = new ArrayList<>();
+        String carIDs = string.replace("[", "").replace("]", "");
+        String[] fields = carIDs.split(",\\s*");
+        for (Car car : cars) {
+            for (String field : fields) {
+                if (car.getCarId().equals(field)) {
+                    newCars.add(car);
+                }
+            }
+        }
+        return newCars;
+    }
     // Method to read from file
     public static List<SalesTransaction> readTransactionsFromFile() {
         List<SalesTransaction> transactions = new ArrayList<>();
@@ -37,9 +55,10 @@ public class SalesTransactionCRUD {
                 try {
                     LocalDate date = stringToDate(fields.get(1));
                     List<AutoPart> replacedParts = readReplaceParts(fields.get(4));
+                    List<Car> newCars = readCar(fields.get(5));
                     SalesTransaction transaction = new SalesTransaction(fields.get(0), date, fields.get(2), fields.get(3),
-                            replacedParts, Double.parseDouble(fields.get(5)),
-                            Double.parseDouble(fields.get(6)), fields.get(7));
+                            replacedParts, newCars,Double.parseDouble(fields.get(6)),
+                            Double.parseDouble(fields.get(7)), fields.get(8));
                     transactions.add(transaction);
 
                     int id = Integer.parseInt(fields.get(0).substring(2));
@@ -50,7 +69,6 @@ public class SalesTransactionCRUD {
                     System.out.println("An unexpected error occurred while creating transaction: " + e.getMessage());
                     System.exit(0);
                 }
-
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -58,20 +76,29 @@ public class SalesTransactionCRUD {
         return transactions;
     }
 
+
+
     // Method to write to file
     public static void writeTransactionsToFile(List<SalesTransaction> transactions) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
             for (SalesTransaction transaction : transactions) {
                 List<AutoPart> parts = transaction.getReplacedParts();
                 List<String> replacedParts = new ArrayList<>();
+                List<Car> cars = transaction.getNewCars();
+                List<String> newCars = new ArrayList<>();
+
                 for (AutoPart part : parts) {
                     replacedParts.add(part.getPartID());
+                }
+                for (Car car : cars) {
+                    newCars.add(car.getCarId());
                 }
                 writer.write(transaction.getTransactionID() + "," +
                         transaction.getTransactionDate() + "," +
                         transaction.getClientID() + "," +
                         transaction.getSalespersonID()+ "," +
                         replacedParts + "," +
+                        newCars + "," +
                         transaction.getDiscount() + "," +
                         transaction.getTotalAmount() + "," +
                         transaction.getAdditionalNotes());
@@ -85,6 +112,7 @@ public class SalesTransactionCRUD {
     public static void createTransaction() {
         List<SalesTransaction> transactions = readTransactionsFromFile();
         List<AutoPart> parts = readPartsFromFile();
+        List<Car> cars = readCarsFromFile();
         LocalDate transactionDate;
         int year = 0;
         int month = 0;
@@ -93,6 +121,7 @@ public class SalesTransactionCRUD {
         String clientID;
         String salePersonID;
         List<AutoPart> replacedParts = new ArrayList<>();
+        List<Car> newCars = new ArrayList<>();
         double discount = 0.0;
         double totalAmount = 0.0;
         String notes;
@@ -187,6 +216,28 @@ public class SalesTransactionCRUD {
             }
         }
 
+        boolean validCars = false;
+        while (!validCars) {
+            System.out.println("Enter cars id(optional) or Enter 'skip': ");
+            String input = sc.nextLine().trim();
+            if (input.equals("skip")) {
+                validCars = true;
+            } else if (input.isEmpty()) {
+                System.out.println("Input cannot be empty");
+            } else {
+                for (Car car : cars) {
+                    if (input.equals(car.getCarId())) {
+                        validCars = true;
+                        newCars.add(car);
+                        break;
+                    }
+                }
+                if (!validParts) {
+                    System.out.println("Input invalid");
+                }
+            }
+        }
+
         boolean validDiscount = false;
         while (!validDiscount) {
             System.out.println("Enter Discount: ");
@@ -230,7 +281,7 @@ public class SalesTransactionCRUD {
         transactionDate = LocalDate.of(year, month, day);
         String newTransactionId = generateTransactionId();
         SalesTransaction newTransaction = new SalesTransaction(newTransactionId, transactionDate, clientID,
-                salePersonID, replacedParts, discount, totalAmount, notes);
+                salePersonID, replacedParts, newCars, discount, totalAmount, notes);
         transactions.add(newTransaction);
         writeTransactionsToFile(transactions);
 
@@ -260,14 +311,16 @@ public class SalesTransactionCRUD {
     public static void updateTransaction() {
         List<SalesTransaction> transactions = readTransactionsFromFile();
         List<AutoPart> parts = readPartsFromFile();
+        List<Car> cars = readCarsFromFile();
         System.out.println("Enter transaction id: ");
         String id = sc.nextLine();
         boolean exist = false;
         for (SalesTransaction transaction : transactions) {
             List<AutoPart> replacedParts = transaction.getReplacedParts();
+            List<Car> newCars = transaction.getNewCars();
             if (id.equals(transaction.getTransactionID())) {
                 exist = true;
-                System.out.println("Enter data to update (date/client/sale person/replaced parts/discount/total amount/notes)");
+                System.out.println("Enter data to update (date/client/sale person/replaced parts/ cars/ discount/total amount/notes)");
                 String data = sc.nextLine();
                 boolean invalid = false;
                 switch (data) {
@@ -388,6 +441,59 @@ public class SalesTransactionCRUD {
                         }
                         transaction.setReplacedParts(replacedParts);
                         break;
+
+                    case "cars":
+                        System.out.println("List of cars: " + newCars);
+                        //Delete choice
+                        if (!newCars.isEmpty()) {
+                            boolean validDelete = false;
+                            while (!validDelete) {
+                                System.out.println("Enter car Id to delete or enter 'skip': ");
+                                String input = sc.nextLine().trim();
+                                if (input.equals("skip")) {
+                                    validDelete = true;
+                                } else if (input.isEmpty()) {
+                                    System.out.println("Input cannot be empty");
+                                } else {
+                                    for ( Car newCar: newCars) {
+                                        if (input.equals(newCar.getCarId())) {
+                                            validDelete = true;
+                                            newCars.remove(newCar);
+                                            break;
+                                        }
+                                    }
+                                    if (!validDelete) {
+                                        System.out.println("Input invalid");
+                                    }
+                                }
+                            }
+                        }
+
+                        //Add choice
+                        boolean validAdd1 = false;
+                        while (!validAdd1) {
+                            System.out.println("Enter car Id to add or enter 'skip': ");
+                            String input = sc.nextLine().trim();
+                            if (input.equals("skip")) {
+                                validAdd1 = true;
+                            } else if (input.isEmpty()) {
+                                System.out.println("Input cannot be empty");
+                            } else {
+                                for (Car car : cars) {
+                                    if (input.equals(car.getCarId())) {
+                                        validAdd1 = true;
+                                        cars.add(car);
+                                        break;
+                                    }
+                                }
+                                if (!validAdd1) {
+                                    System.out.println("Input invalid");
+                                }
+                            }
+                        }
+                        transaction.setReplacedParts(replacedParts);
+                        break;
+
                     case "discount":
                         System.out.println("Enter discount: ");
                         transaction.setDiscount(sc.nextDouble());
@@ -443,6 +549,7 @@ public class SalesTransactionCRUD {
         }
     }
 
+
     // Main control for crud operation
     public static void transactionControl() {
         File file = new File(filename);
@@ -485,4 +592,5 @@ public class SalesTransactionCRUD {
             }
         } while (isActive);
     }
+
 }
