@@ -11,19 +11,21 @@ public class SalesTransaction {
     private String clientID;
     private String salespersonID;
     private List<AutoPart> replacedParts;
+    private List<Car> newCars;
     private double discount;
     private double totalAmount;
     private String additionalNotes;
 
     // Constructor
     public SalesTransaction(String transactionID, LocalDate transactionDate, String clientID,
-                            String salespersonID, List<AutoPart> replacedParts,
+                            String salespersonID, List<AutoPart> replacedParts, List<Car> newCars,
                             double discount, double totalAmount, String additionalNotes) {
         this.transactionID = transactionID;
         this.transactionDate = transactionDate;
         this.clientID = clientID;
         this.salespersonID = salespersonID;
         this.replacedParts = replacedParts;
+        this.newCars = newCars;
         this.discount = discount;
         this.totalAmount = totalAmount;
         this.additionalNotes = additionalNotes;
@@ -75,6 +77,14 @@ public class SalesTransaction {
         this.replacedParts = replacedParts;
     }
 
+    public List<Car> getNewCars() {
+        return newCars;
+    }
+
+    public void setNewCars(List<Car> newCars) {
+        this.newCars = newCars;
+    }
+
     public double getDiscount() {
         return discount;
     }
@@ -107,10 +117,12 @@ public class SalesTransaction {
                 ", clientID='" + clientID + '\'' +
                 ", salespersonID='" + salespersonID + '\'' +
                 ", replacedParts=" + replacedParts +
+                ", newCars=" + newCars +
                 ", discount=" + discount +
                 ", totalAmount=" + totalAmount +
                 ", additionalNotes='" + additionalNotes + '\'' +
                 '}';
     }
 }
+
 
