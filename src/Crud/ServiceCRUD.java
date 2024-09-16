@@ -92,7 +92,7 @@ public class ServiceCRUD {
                 }
                 writer.write(service.getServiceID() + "," +
                         service.getServiceDate() + "," +
-                        service.getServiceID() + "," +
+                        service.getClientID() + "," +
                         service.getMechanicID() + "," +
                         service.getServiceType() + "," +
                         replacedParts + "," +

@@ -244,7 +244,7 @@ public class SalesTransactionCRUD {
             if (sc.hasNextDouble()) {
                 discount = sc.nextDouble();
                 sc.nextLine();
-                if (discount > 0) {
+                if (discount >= 0) {
                     validDiscount = true;
                 } else {
                     System.out.println("Discount must be a positive number. Please try again.");

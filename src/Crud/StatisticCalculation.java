@@ -600,7 +600,7 @@ public class StatisticCalculation {
         boolean isActive = true;
         do {
             System.out.println("1: Calculate car sold in month");
-            System.out.println("2: Calculate revernue in a period");
+            System.out.println("2: Calculate revenue in a period");
             System.out.println("3: Calculate the revenue of the services done of a mechanic");
             System.out.println("4: Calculate the revenue of the cars sold of a salesperson");
             System.out.println("5: List of car sold in a period");
