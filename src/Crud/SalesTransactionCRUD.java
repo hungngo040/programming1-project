@@ -232,7 +232,7 @@ public class SalesTransactionCRUD {
                         break;
                     }
                 }
-                if (!validParts) {
+                if (!validCars) {
                     System.out.println("Input invalid");
                 }
             }
@@ -482,7 +482,7 @@ public class SalesTransactionCRUD {
                                 for (Car car : cars) {
                                     if (input.equals(car.getCarId())) {
                                         validAdd1 = true;
-                                        cars.add(car);
+                                        newCars.add(car);
                                         break;
                                     }
                                 }
@@ -491,7 +491,7 @@ public class SalesTransactionCRUD {
                                 }
                             }
                         }
-                        transaction.setReplacedParts(replacedParts);
+                        transaction.setNewCars(newCars);
                         break;
 
                     case "discount":
