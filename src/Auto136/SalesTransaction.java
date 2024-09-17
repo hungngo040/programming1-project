@@ -1,77 +1,39 @@
 package Auto136;
 
 import java.io.*;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class SalesTransaction {
-    private static final AtomicInteger idCounter = new AtomicInteger(loadLastId()); // Initialize ID counter with the last used ID
+    public static int transactionCounter = 1; // Initialize ID counter with a default value
     private String transactionID;
-    private Date transactionDate;
+    private LocalDate transactionDate;
     private String clientID;
     private String salespersonID;
-    private List<Purchasable> purchasedItems; // Can contain Auto136.AutoPart or Auto136.Car
+    private List<AutoPart> replacedParts;
+    private List<Car> newCars;
     private double discount;
     private double totalAmount;
     private String additionalNotes;
 
     // Constructor
-    public SalesTransaction(Date transactionDate, String clientID,
-                            String salespersonID, List<Purchasable> purchasedItems,
+    public SalesTransaction(String transactionID, LocalDate transactionDate, String clientID,
+                            String salespersonID, List<AutoPart> replacedParts, List<Car> newCars,
                             double discount, double totalAmount, String additionalNotes) {
-        this.transactionID = generateTransactionId();
+        this.transactionID = transactionID;
         this.transactionDate = transactionDate;
         this.clientID = clientID;
         this.salespersonID = salespersonID;
-        this.purchasedItems = purchasedItems;
+        this.replacedParts = replacedParts;
+        this.newCars = newCars;
         this.discount = discount;
         this.totalAmount = totalAmount;
         this.additionalNotes = additionalNotes;
-        writeToFile();
     }
 
     // Generate a unique transaction ID (t-number)
-    private String generateTransactionId() {
-        return "t-" + idCounter.incrementAndGet(); // Increment the ID counter for each new transaction
-    }
-
-    // Write transaction info to sales_transaction.txt
-    private void writeToFile() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("sales_transaction.txt", true))) {
-            writer.write(toFileString());
-            writer.newLine();
-            saveLastId(idCounter.get()); // Save the latest ID to the file after writing the transaction details
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    // Convert transaction info to string format for file writing
-    private String toFileString() {
-        return transactionID + "," + transactionDate + "," + clientID + "," + salespersonID + "," + purchasedItems + "," + discount + "," + totalAmount + "," + additionalNotes;
-    }
-
-    // Load the last used ID from file
-    private static int loadLastId() {
-        try (BufferedReader reader = new BufferedReader(new FileReader("transaction_id_counter.txt"))) {
-            String line = reader.readLine();
-            if (line != null) {
-                return Integer.parseInt(line);
-            }
-        } catch (IOException | NumberFormatException e) {
-            // Handle file not found or format issues
-        }
-        return 0; // Default value if file not found or empty
-    }
-
-    // Save the last used ID to file
-    private static void saveLastId(int id) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("transaction_id_counter.txt"))) {
-            writer.write(String.valueOf(id));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public static String generateTransactionId() {
+        return "t-" + (transactionCounter++); // Increment the counter for each new transaction
     }
 
     // Getters and Setters
@@ -83,11 +45,11 @@ public class SalesTransaction {
         this.transactionID = transactionID;
     }
 
-    public Date getTransactionDate() {
+    public LocalDate getTransactionDate() {
         return transactionDate;
     }
 
-    public void setTransactionDate(Date transactionDate) {
+    public void setTransactionDate(LocalDate transactionDate) {
         this.transactionDate = transactionDate;
     }
 
@@ -107,12 +69,20 @@ public class SalesTransaction {
         this.salespersonID = salespersonID;
     }
 
-    public List<Purchasable> getPurchasedItems() {
-        return purchasedItems;
+    public List<AutoPart> getReplacedParts() {
+        return replacedParts;
     }
 
-    public void setPurchasedItems(List<Purchasable> purchasedItems) {
-        this.purchasedItems = purchasedItems;
+    public void setReplacedParts(List<AutoPart> replacedParts) {
+        this.replacedParts = replacedParts;
+    }
+
+    public List<Car> getNewCars() {
+        return newCars;
+    }
+
+    public void setNewCars(List<Car> newCars) {
+        this.newCars = newCars;
     }
 
     public double getDiscount() {
@@ -141,15 +111,18 @@ public class SalesTransaction {
 
     @Override
     public String toString() {
-        return "Auto136.SalesTransaction{" +
+        return "SalesTransaction{" +
                 "transactionID='" + transactionID + '\'' +
                 ", transactionDate=" + transactionDate +
                 ", clientID='" + clientID + '\'' +
                 ", salespersonID='" + salespersonID + '\'' +
-                ", purchasedItems=" + purchasedItems +
+                ", replacedParts=" + replacedParts +
+                ", newCars=" + newCars +
                 ", discount=" + discount +
                 ", totalAmount=" + totalAmount +
                 ", additionalNotes='" + additionalNotes + '\'' +
                 '}';
     }
 }
+
+

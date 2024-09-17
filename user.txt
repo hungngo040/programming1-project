@@ -1,0 +1,4 @@
+u-1,name1,2000-01-01,VN,0999999999,mail.@gmail.com,MECHANIC,true
+u-2,name2,2000-01-01,US,0999999999,mail2@gmail.com,SALESPERSON,true
+u-3,name3,2000-01-01,AU,0999999999,mail3@gmail.com,CLIENT,true
+u-4,name4,2000-01-01,CN,0999999999,mail4@gmail.com,MANAGER,true

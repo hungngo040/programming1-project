@@ -1,7 +1,8 @@
 package Crud;
 
 import Auto136.AutoPart;
-import Auto136.Service;
+import Auto136.Car;
+import Auto136.SalesTransaction;
 
 import java.io.*;
 import java.time.LocalDate;
@@ -12,40 +13,34 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-import static Auto136.Service.*;
+import static Auto136.SalesTransaction.*;
 import static Crud.AutoPartCRUD.readPartsFromFile;
+import static Crud.CarCRUD.readCarsFromFile;
+import static Crud.ServiceCRUD.stringToDate;
+import static Crud.ServiceCRUD.readReplaceParts;
 
-public class ServiceCRUD {
+
+public class SalesTransactionCRUD {
     private static final Scanner sc = new Scanner(System.in);
-    private static final String filename = "service.txt";
+    private static final String filename = "sale_transaction.txt";
 
-    public static LocalDate stringToDate(String dateString) {
-        String[] fields = dateString.split("-");
-        ArrayList<Integer> dateFields = new ArrayList<>();
-        for (String field : fields) {
-            dateFields.add(Integer.parseInt(field));
-        }
-        return LocalDate.of(dateFields.get(0), dateFields.get(1), dateFields.get(2));
-    }
-
-    public static List<AutoPart> readReplaceParts(String string) {
-        List<AutoPart> parts = readPartsFromFile();
-        List<AutoPart> replacedParts = new ArrayList<>();
-        String partIDs = string.replace("[", "").replace("]", "");
-        String[] fields = partIDs.split(",\\s*");
-        for (AutoPart part : parts) {
+    public static List<Car> readCar(String string) {
+        List<Car> cars = readCarsFromFile();
+        List<Car> newCars = new ArrayList<>();
+        String carIDs = string.replace("[", "").replace("]", "");
+        String[] fields = carIDs.split(",\\s*");
+        for (Car car : cars) {
             for (String field : fields) {
-                if (part.getPartID().equals(field)) {
-                    replacedParts.add(part);
+                if (car.getCarId().equals(field)) {
+                    newCars.add(car);
                 }
             }
         }
-        return replacedParts;
+        return newCars;
     }
-
     // Method to read from file
-    public static List<Service> readServicesFromFile() {
-        List<Service> services = new ArrayList<>();
+    public static List<SalesTransaction> readTransactionsFromFile() {
+        List<SalesTransaction> transactions = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             String line;
@@ -59,45 +54,54 @@ public class ServiceCRUD {
                 }
                 try {
                     LocalDate date = stringToDate(fields.get(1));
-                    List<AutoPart> replacedParts = readReplaceParts(fields.get(5));
-                    Service service = new Service(fields.get(0), date, fields.get(2), fields.get(3),
-                            fields.get(4), replacedParts,
-                            Double.parseDouble(fields.get(6)), fields.get(7));
-                    services.add(service);
+                    List<AutoPart> replacedParts = readReplaceParts(fields.get(4));
+                    List<Car> newCars = readCar(fields.get(5));
+                    SalesTransaction transaction = new SalesTransaction(fields.get(0), date, fields.get(2), fields.get(3),
+                            replacedParts, newCars,Double.parseDouble(fields.get(6)),
+                            Double.parseDouble(fields.get(7)), fields.get(8));
+                    transactions.add(transaction);
 
                     int id = Integer.parseInt(fields.get(0).substring(2));
-                    if (id >= serviceCounter) {
-                        serviceCounter = id + 1;
+                    if (id >= transactionCounter) {
+                        transactionCounter = id + 1;
                     }
                 } catch (Exception e) {
-                    System.out.println("An unexpected error occurred while creating service: " + e.getMessage());
+                    System.out.println("An unexpected error occurred while creating transaction: " + e.getMessage());
                     System.exit(0);
                 }
-
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return services;
+        return transactions;
     }
 
+
+
     // Method to write to file
-    public static void writeServicesToFile(List<Service> services) {
+    public static void writeTransactionsToFile(List<SalesTransaction> transactions) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
-            for (Service service : services) {
-                List<AutoPart> parts = service.getReplacedParts();
+            for (SalesTransaction transaction : transactions) {
+                List<AutoPart> parts = transaction.getReplacedParts();
                 List<String> replacedParts = new ArrayList<>();
+                List<Car> cars = transaction.getNewCars();
+                List<String> newCars = new ArrayList<>();
+
                 for (AutoPart part : parts) {
                     replacedParts.add(part.getPartID());
                 }
-                writer.write(service.getServiceID() + "," +
-                        service.getServiceDate() + "," +
-                        service.getClientID() + "," +
-                        service.getMechanicID() + "," +
-                        service.getServiceType() + "," +
+                for (Car car : cars) {
+                    newCars.add(car.getCarId());
+                }
+                writer.write(transaction.getTransactionID() + "," +
+                        transaction.getTransactionDate() + "," +
+                        transaction.getClientID() + "," +
+                        transaction.getSalespersonID()+ "," +
                         replacedParts + "," +
-                        service.getServiceCost() + "," +
-                        service.getAdditionalNotes());
+                        newCars + "," +
+                        transaction.getDiscount() + "," +
+                        transaction.getTotalAmount() + "," +
+                        transaction.getAdditionalNotes());
                 writer.newLine();
             }
         } catch (IOException e) {
@@ -105,19 +109,21 @@ public class ServiceCRUD {
         }
     }
 
-    public static void createService() {
-        List<Service> services = readServicesFromFile();
+    public static void createTransaction() {
+        List<SalesTransaction> transactions = readTransactionsFromFile();
         List<AutoPart> parts = readPartsFromFile();
-        LocalDate serviceDate;
+        List<Car> cars = readCarsFromFile();
+        LocalDate transactionDate;
         int year = 0;
         int month = 0;
         int day = 0;
 
         String clientID;
-        String mechanicID;
-        String serviceType;
+        String salePersonID;
         List<AutoPart> replacedParts = new ArrayList<>();
-        double serviceCost = 0.0;
+        List<Car> newCars = new ArrayList<>();
+        double discount = 0.0;
+        double totalAmount = 0.0;
         String notes;
 
         boolean validYear = false;
@@ -172,28 +178,20 @@ public class ServiceCRUD {
         }
 
         do {
-            System.out.println("Enter clientID: ");
+            System.out.println("Enter client ID: ");
             clientID = sc.nextLine().trim();
             if (clientID.isEmpty()) {
-                System.out.println("ClientID cannot be empty. Please try again.");
+                System.out.println("Client ID cannot be empty. Please try again.");
             }
         } while (clientID.isEmpty());
 
         do {
-            System.out.println("Enter mechanicID: ");
-            mechanicID = sc.nextLine().trim();
-            if (mechanicID.isEmpty()) {
-                System.out.println("mechanicID cannot be empty. Please try again.");
+            System.out.println("Enter Sale Person ID: ");
+            salePersonID = sc.nextLine().trim();
+            if (salePersonID.isEmpty()) {
+                System.out.println(" Sale Person ID cannot be empty. Please try again.");
             }
-        } while (mechanicID.isEmpty());
-
-        do {
-            System.out.println("Enter serviceType: ");
-            serviceType = sc.nextLine().trim();
-            if (serviceType.isEmpty()) {
-                System.out.println("serviceType cannot be empty. Please try again.");
-            }
-        } while (serviceType.isEmpty());
+        } while (salePersonID.isEmpty());
 
         //list
         boolean validParts = false;
@@ -218,68 +216,111 @@ public class ServiceCRUD {
             }
         }
 
-        boolean validCost = false;
-        while (!validCost) {
-            System.out.println("Enter service cost: ");
+        boolean validCars = false;
+        while (!validCars) {
+            System.out.println("Enter cars id(optional) or Enter 'skip': ");
+            String input = sc.nextLine().trim();
+            if (input.equals("skip")) {
+                validCars = true;
+            } else if (input.isEmpty()) {
+                System.out.println("Input cannot be empty");
+            } else {
+                for (Car car : cars) {
+                    if (input.equals(car.getCarId())) {
+                        validCars = true;
+                        newCars.add(car);
+                        break;
+                    }
+                }
+                if (!validCars) {
+                    System.out.println("Input invalid");
+                }
+            }
+        }
+
+        boolean validDiscount = false;
+        while (!validDiscount) {
+            System.out.println("Enter Discount: ");
             if (sc.hasNextDouble()) {
-                serviceCost = sc.nextDouble();
+                discount = sc.nextDouble();
                 sc.nextLine();
-                if (serviceCost > 0) {
-                    validCost = true;
+                if (discount >= 0) {
+                    validDiscount = true;
                 } else {
-                    System.out.println("service cost must be a positive number. Please try again.");
+                    System.out.println("Discount must be a positive number. Please try again.");
                 }
             } else {
-                System.out.println("Invalid input. Please enter a valid number for the cost.");
+                System.out.println("Invalid input. Please enter a valid number for the discount.");
                 sc.next();
             }
         }
-        System.out.println("Enter service notes: ");
+
+        boolean validTotalAmount = false;
+        while (!validTotalAmount) {
+            System.out.println("Enter Total Amount: ");
+            if (sc.hasNextDouble()) {
+                totalAmount = sc.nextDouble();
+                sc.nextLine();
+                if (totalAmount > 0) {
+                    validTotalAmount = true;
+                } else {
+                    System.out.println("Total Amount must be a positive number. Please try again.");
+                }
+            } else {
+                System.out.println("Invalid input. Please enter a valid number for the total amount.");
+                sc.next();
+            }
+        }
+
+        System.out.println("Enter transaction notes: ");
         notes = sc.nextLine();
         if (notes.isEmpty()) {
             notes = "none";
         }
 
-        serviceDate = LocalDate.of(year,month,day);
-        String newServiceId = generateServiceId();
-        Service newService = new Service(newServiceId,serviceDate,clientID,mechanicID,serviceType,replacedParts,serviceCost,notes);
-        services.add(newService);
-        writeServicesToFile(services);
+        transactionDate = LocalDate.of(year, month, day);
+        String newTransactionId = generateTransactionId();
+        SalesTransaction newTransaction = new SalesTransaction(newTransactionId, transactionDate, clientID,
+                salePersonID, replacedParts, newCars, discount, totalAmount, notes);
+        transactions.add(newTransaction);
+        writeTransactionsToFile(transactions);
 
     }
 
     // Method to display part read from file
-    public static void readService() {
-        List<Service> services = readServicesFromFile();
+    public static void readTransaction() {
+        List<SalesTransaction> transactions = readTransactionsFromFile();
         System.out.println("Enter specific ID or a for all:");
         String input = sc.nextLine();
         boolean exist = false;
         if (input.equals("a")) {
-            for (Service service : services) {
-                System.out.println(service);
+            for (SalesTransaction transaction : transactions) {
+                System.out.println(transaction);
             }
         } else {
-            for (Service service : services) {
-                if (input.equals(service.getServiceID())) {
+            for (SalesTransaction transaction : transactions) {
+                if (input.equals(transaction.getTransactionID())) {
                     exist = true;
-                    System.out.println(service);
+                    System.out.println(transaction);
                 }
             }
-            if (!exist) System.out.println("Service does not exist");
+            if (!exist) System.out.println("Transaction does not exist");
         }
     }
 
-    public static void updateService() {
-        List<Service> services = readServicesFromFile();
+    public static void updateTransaction() {
+        List<SalesTransaction> transactions = readTransactionsFromFile();
         List<AutoPart> parts = readPartsFromFile();
-        System.out.println("Enter service id: ");
+        List<Car> cars = readCarsFromFile();
+        System.out.println("Enter transaction id: ");
         String id = sc.nextLine();
         boolean exist = false;
-        for (Service service : services) {
-            List<AutoPart> replacedParts = service.getReplacedParts();
-            if (id.equals(service.getServiceID())) {
+        for (SalesTransaction transaction : transactions) {
+            List<AutoPart> replacedParts = transaction.getReplacedParts();
+            List<Car> newCars = transaction.getNewCars();
+            if (id.equals(transaction.getTransactionID())) {
                 exist = true;
-                System.out.println("Enter data to update (date/client/mechanic/type/replaced parts/cost/notes)");
+                System.out.println("Enter data to update (date/client/sale person/replaced parts/ cars/ discount/total amount/notes)");
                 String data = sc.nextLine();
                 boolean invalid = false;
                 switch (data) {
@@ -338,25 +379,21 @@ public class ServiceCRUD {
                                 sc.next();
                             }
                         }
-                        LocalDate serviceDate = LocalDate.of(year,month,day);
-                        service.setServiceDate(serviceDate);
+                        LocalDate transactionDate = LocalDate.of(year, month, day);
+                        transaction.setTransactionDate(transactionDate);
                         break;
                     case "client":
-                        System.out.println("Enter service clientID: ");
-                        service.setClientID(sc.nextLine());
+                        System.out.println("Enter transaction clientID: ");
+                        transaction.setClientID(sc.nextLine());
                         break;
-                    case "mechanic":
-                        System.out.println("Enter service mechanicID: ");
-                        service.setMechanicID(sc.nextLine());
-                        break;
-                    case "type":
-                        System.out.println("Enter service type: ");
-                        service.setServiceType(sc.nextLine());
+                    case "salePerson":
+                        System.out.println("Enter sale person ID: ");
+                        transaction.setSalespersonID(sc.nextLine());
                         break;
                     case "replaced parts":
                         System.out.println("List of parts: " + replacedParts);
                         //Delete choice
-                        if(!replacedParts.isEmpty()) {
+                        if (!replacedParts.isEmpty()) {
                             boolean validDelete = false;
                             while (!validDelete) {
                                 System.out.println("Enter part Id to delete or enter 'skip': ");
@@ -402,16 +439,77 @@ public class ServiceCRUD {
                                 }
                             }
                         }
-                        service.setReplacedParts(replacedParts);
+                        transaction.setReplacedParts(replacedParts);
                         break;
-                    case "cost":
-                        System.out.println("Enter service cost: ");
-                        service.setServiceCost(sc.nextDouble());
+
+                    case "cars":
+                        System.out.println("List of cars: " + newCars);
+                        //Delete choice
+                        if (!newCars.isEmpty()) {
+                            boolean validDelete = false;
+                            while (!validDelete) {
+                                System.out.println("Enter car Id to delete or enter 'skip': ");
+                                String input = sc.nextLine().trim();
+                                if (input.equals("skip")) {
+                                    validDelete = true;
+                                } else if (input.isEmpty()) {
+                                    System.out.println("Input cannot be empty");
+                                } else {
+                                    for ( Car newCar: newCars) {
+                                        if (input.equals(newCar.getCarId())) {
+                                            validDelete = true;
+                                            newCars.remove(newCar);
+                                            break;
+                                        }
+                                    }
+                                    if (!validDelete) {
+                                        System.out.println("Input invalid");
+                                    }
+                                }
+                            }
+                        }
+
+                        //Add choice
+                        boolean validAdd1 = false;
+                        while (!validAdd1) {
+                            System.out.println("Enter car Id to add or enter 'skip': ");
+                            String input = sc.nextLine().trim();
+                            if (input.equals("skip")) {
+                                validAdd1 = true;
+                            } else if (input.isEmpty()) {
+                                System.out.println("Input cannot be empty");
+                            } else {
+                                for (Car car : cars) {
+                                    if (input.equals(car.getCarId())) {
+                                        validAdd1 = true;
+                                        newCars.add(car);
+                                        break;
+                                    }
+                                }
+                                if (!validAdd1) {
+                                    System.out.println("Input invalid");
+                                }
+                            }
+                        }
+                        transaction.setNewCars(newCars);
+                        break;
+
+                    case "discount":
+                        System.out.println("Enter discount: ");
+                        transaction.setDiscount(sc.nextDouble());
                         sc.nextLine();
                         break;
+                    case "total amount":
+                        System.out.println("Enter total amount: ");
+                        transaction.setTotalAmount(sc.nextDouble());
+                        sc.nextLine();
+                        break;
+
+
+
                     case "notes":
                         System.out.println("Enter service notes: ");
-                        service.setAdditionalNotes(sc.nextLine());
+                        transaction.setAdditionalNotes(sc.nextLine());
                         break;
                     default:
                         invalid = true;
@@ -419,7 +517,7 @@ public class ServiceCRUD {
                         break;
                 }
                 if (!invalid) {
-                    writeServicesToFile(services);
+                    writeTransactionsToFile(transactions);
                     System.out.println("Updated: " + id);
                     break;
                 }
@@ -431,28 +529,29 @@ public class ServiceCRUD {
     }
 
     // Method to delete a part
-    public static void deleteService() {
-        List<Service> services = readServicesFromFile();
+    public static void deleteTransaction() {
+        List<SalesTransaction> transactions = readTransactionsFromFile();
         System.out.println("Enter a specific ID to delete:");
         String input = sc.nextLine();
         boolean exist = false;
-        for (Service service : services) {
-            if (input.equals(service.getServiceID())) {
+        for (SalesTransaction transaction : transactions) {
+            if (input.equals(transaction.getTransactionID())) {
                 exist = true;
-                services.remove(service);
+                transactions.remove(transaction);
                 break;
             }
         }
         if (exist) {
-            writeServicesToFile(services);
-            System.out.println("Service deleted");
+            writeTransactionsToFile(transactions);
+            System.out.println("Transaction deleted");
         } else {
-            System.out.println("Service does not exist");
+            System.out.println("Transaction does not exist");
         }
     }
 
+
     // Main control for crud operation
-    public static void serviceControl() {
+    public static void transactionControl() {
         File file = new File(filename);
         // If file does not exist, create it
         if (!file.exists()) {
@@ -464,25 +563,25 @@ public class ServiceCRUD {
         }
         boolean isActive = true;
         do {
-            System.out.println("1: Add a service");
-            System.out.println("2: View service");
-            System.out.println("3: Update service");
-            System.out.println("4: Delete service");
+            System.out.println("1: Add a transaction");
+            System.out.println("2: View transaction");
+            System.out.println("3: Update transaction");
+            System.out.println("4: Delete transaction");
             System.out.println("0: exit");
             String input = sc.nextLine();
 
             switch (input) {
                 case "1":
-                    createService();
+                    createTransaction();
                     break;
                 case "2":
-                    readService();
+                    readTransaction();
                     break;
                 case "3":
-                    updateService();
+                    updateTransaction();
                     break;
                 case "4":
-                    deleteService();
+                    deleteTransaction();
                     break;
                 case "0":
                     isActive = false;
@@ -493,4 +592,5 @@ public class ServiceCRUD {
             }
         } while (isActive);
     }
+
 }
